@@ -52,35 +52,19 @@ jQuery(document).ready(function($) {
     </div>
 
     <div class="row">
-        <div class="child-image" style="background-image: url(<?php echo $child_data['portrait']; ?>);">
+        <div class="child-image" style="background-image: url(<?php echo $child_data['portrait']; ?>);"></div>
 
-        </div>
-
-        <?php
-        if ($my_current_lang == "fr") {
-            $msk = isset($_SESSION['msk_name']) && isset($_SESSION['msk_participant_name']);
-            if ($msk) { ?>
-                <h2 style="text-align: center;">
-                    <?= __('Danke, dass Sie sich für', 'child-sponsor-lang') ?> <?= $child_data['name'] ?> <?= __('einsetzen. Die Patenschaft wird das Leben dieses Kindes nachhaltig verändern.', 'child-sponsor-lang'); ?>
-                </h2>
-            <?php } else { ?>
-                <h2 style="text-align: center;"><?php _e('Schön, dass Sie ', 'child-sponsor-lang'); ?> <?php echo $child_data['name']; ?></h2>
-            <?php }
-        } elseif ($my_current_lang == "de") { ?>
-            <h2 style="text-align: center;"><?php _e('Schön, dass Sie Pate von', 'child-sponsor-lang'); ?> <?php echo $child_data['name']; ?>
-                <?php _e('werden möchten', 'child-sponsor-lang'); ?></h2>
-        <?php } elseif ($my_current_lang == "it") {
+        <h2 style="text-align: center;">
+            <?php
+            /* translators: %s references the child's name. */
+            printf(__('Schön, dass Sie Pate von %s werden möchten', 'compassion'), $child_data['name'])
             ?>
-            <h2 style="text-align: center;"><?php _e('Schön, dass Sie', 'child-sponsor-lang'); ?> <?php echo $child_data['name']; ?></h2>
-        <?php } ?>
-        <p style="text-align: center;" class="subtitle">
-            <?php if ($msk) { ?>
-                <?= $_SESSION['msk_participant_name'] ?>, <?= __('nimmt am', 'child-sponsor-lang') ?> <?= $_SESSION['msk_name'] ?><?= __(' teil.', 'child-sponsor-lang') ?> <?= __('und dankt Ihnen für Ihre Unterstützung!', 'child-sponsor-lang') ?>
-            <?php } else {
-                _e('Sie werden das Leben des Kindes für immer verändern.', 'child-sponsor-lang');
-            } ?>
-        <p>
-	       
-    </div>
+        </h2>
 
+        <p style="text-align: center;" class="subtitle">
+            <?php
+            _e('Sie werden das Leben des Kindes für immer verändern.', 'child-sponsor-lang');
+            ?>
+        <p>
+    </div>
 </div>

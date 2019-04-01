@@ -17,6 +17,7 @@ class CompassionChildren
     public function init()
     {
         $this->register_post_type_child();
+        $this->register_ajax_recommend_child();
     }
 
     public function register_post_type_child() {
@@ -191,17 +192,94 @@ class CompassionChildren
 
     /**
      * Get the id of a random child post.
+     * The child is not reserved.
      */
     public static function get_random_child() {
         $args = array(
             'post_type'			=>	'child',
             'posts_per_page'	=>	'1',
-            'orderby'			=>	'rand'
+            'orderby'			=>	'rand',
+            'meta_query'        =>  array(
+                array(
+                    'key' => '_child_reserved',
+                    'value' => 'false',
+                    'compare' => 'LIKE')),
         );
         $child_posts = get_posts($args);
         foreach($child_posts as $post) {
             return $post->ID;
         }
         return false;
+    }
+
+    public function register_ajax_recommend_child() {
+        add_action('wp_ajax_recommend_child', array($this, 'send_child_recommendation'));
+        add_action('wp_ajax_nopriv_recommend_child', array($this, 'send_child_recommendation'));
+    }
+
+    /** Displays the button and form to recommend a child to a friend.
+     * @param $child_id The id of child post. Used by the ajax endpoint.
+     * @param $child_name The first name of the child. Used in the recommend button.
+     */
+    public static function recommend_child_button($child_id, $child_name) {
+        include('templates/recommend_child_button.php');
+    }
+
+    /**
+     * Called by ajax, to recommend a child to a friend.
+     */
+    public function send_child_recommendation() {
+        function get_email_template($lang, $post_data, $child_id, $child_image)
+        {
+            ob_start();
+            include('templates/recommend_child_email.php');
+            return ob_get_clean();
+        }
+
+        $lang = apply_filters('wpml_current_language', NULL);
+        $child_id = $_POST['child_id'];
+        $child = get_post($child_id);
+        $child_number = get_post_meta($child_id, '_child_number', true);
+        $child_image = get_the_post_thumbnail($child_id);
+
+        // Reserve child to prevent a failed recommendation.
+        try {
+            $odoo = new CompassionOdooConnector();
+            $odoo->reserveChild($child_number);
+            update_post_meta($child_id, '_child_reserved', 'true');
+        } catch (Exception $e) {
+            echo "Child could not be reserved";
+            http_response_code(500);
+            die();
+        }
+
+        try {
+            $email = new PHPMailer();
+            $email->isSMTP();                                      // Set mailer to use SMTP
+            $email->Host = 'smtp.sendgrid.net';  // Specify main and backup SMTP servers
+            $email->SMTPAuth = true;                               // Enable SMTP authentication
+            $email->Username = 'apikey';                 // SMTP username
+            $email->Password = SENDGRID_API_KEY; // SMTP password
+            $email->Port = 587;
+            $email->CharSet = 'UTF-8';
+            $email->From = 'compassion@compassion.ch';
+            $email->FromName = __('Compassion Schweiz', 'child-sponsor-lang');
+            /* translators:  %1$s is the referer last name, %2$s is the child's name */
+            $email->Subject = sprintf(__('%1$s vous propose de parrainer %2$s', 'compassion-posts'), $_POST['coordinates'], $child->post_title);
+            $email->Body = get_email_template($lang, $_POST, $child_id, $child_image);
+            $email->isHTML(true);
+            $email->AddAddress($_POST['friend_email']);
+            $email->addCustomHeader('X-SMTPAPI', '{"filters": {"subscriptiontrack" : {"settings" : {"enable" : 0}}}}');
+            $email->Send();
+        } catch (Exception $e) {
+            echo "Message could not be sent";
+            http_response_code(500);
+            die();
+        }
+
+        // Content sent back. It replaces the button and form used to recommend a child to a friend.
+        include('templates/recommend_child_success.php');
+
+        die();
     }
 }
