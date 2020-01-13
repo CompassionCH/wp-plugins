@@ -250,7 +250,9 @@ function child_import_addChild( $args ) {
     error_log('########## start to import ###########');
 
     $childOdooImport = new ChildOdooImport();
-    if($childOdooImport->importChild($childarray)) { 
+    if($childOdooImport->importChild($childarray)) {
+        fifu_db_insert_attachment();
+        update_option('fifu_fake_created', true, 'no');
         return '1';
     }
     return '0';
