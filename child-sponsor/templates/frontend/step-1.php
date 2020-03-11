@@ -6,6 +6,9 @@ $msk = isset($_SESSION['child-sponsor']['msk_participant_name']) || isset($_SESS
 
 $wapr = isset($_SESSION['utm_source']) && $_SESSION['utm_source']=='wrpr';
 
+// Partner must be younger than this limit for Write&Pray sponsorship
+$wapr_age_limit = 25;
+
 if ($msk) {
     $_SESSION['child-sponsor']['consumer_source'] = $_SESSION['consumer_source'];
     $_SESSION['child-sponsor']['consumer_source_text'] = $_SESSION['consumer_source_text'];
@@ -111,7 +114,18 @@ if ($msk) {
                     <label class="text-left middle"><?php _e('Geburtsdatum', 'child-sponsor-lang'); ?></label>
                 </div>
                 <div class="small-8 columns">
-                    <input type="text" id="datepicker" placeholder="31/12/2000" class="input-field" required data-msg="<?php _e('Geburtsdatum erforderlich', 'child-sponsor-lang'); ?>" name="birthday" value="<?php echo (isset($session_data['birthday'])) ? $session_data['birthday'] : ''; ?>">
+                    <input type="text"
+                           id="datepicker"
+                           name="birthday"
+                           placeholder="31/12/2000"
+                           class="input-field"
+                           required
+                           value="<?php echo (isset($session_data['birthday'])) ? $session_data['birthday'] : ''; ?>"
+                           data-default-msg="<?php _e('Geburtsdatum erforderlich', 'child-sponsor-lang'); ?>"
+                           data-wrpr="<?= $wapr ? "true" : "false"; ?>"
+                           data-wrpr-age-limit="<?= $wapr_age_limit; ?>"
+                           data-wrpr-age-limit-msg="<?php _e("Write&Pray Sponsorship are reserved for people under 25. Click here to reach the general sponsorship page", 'child-sponsor-lang'); ?>"
+                    />
                 </div>
             </div>
 
@@ -153,7 +167,7 @@ if ($msk) {
 
 			<!--              Writeandpraystuff  -->
 
-              <?php if (!$wapr) { ?>
+<?php if (!$wapr) { ?>
 
             <h4 class="text-uppercase" id="bank"><?php _e('Zahlungsweise', 'child-sponsor-lang'); ?></h4>
 				<div class="row">
@@ -176,17 +190,23 @@ if ($msk) {
 
                 </div>
                 </div>
-         <?php } else { ?>
-
+<?php } else { ?>
        <h4 class="text-uppercase" id="Patenschaftplus"><?php _e('Write & Pray', 'child-sponsor-lang'); ?></h4>
-             	<div class="row">
-                <div class="small-12 columns">
-	            <input class="" type="checkbox" required  <?php echo (isset($session_data['writepray']) && $session_data['writepray']['checkbox'] == 'on') ? 'checked' : ''; ?> name="writepray[checkbox]"> <span class="marg-left-10 strong-statment">  <?php _e('JA', 'child-sponsor-lang'); ?></span>
-	             <p class="marg-top-10"><?php _e('Ich engagiere mich für mein Patenkind zu beten und ihm regelmässsig zu schreiben.  Ich habe verstanden, dass eine andere Person die Finanzierung dieser Patenschaft übernimmt und ich gegenüber dem Kind der/die offizielle Pate/Patin bin.', 'child-sponsor-lang')?></p>
+            <div class="row">
+                <div class="small-12 columns radio-wrapper">
+                    <label><input type="radio" required data-msg="<?php _e('Angabe erforderlich', 'child-sponsor-lang'); ?>" name="writepray" value="WRPR">
+                      <?php _e('Ich engagiere mich für mein Patenkind zu beten und ihm regelmässsig zu schreiben.  Ich habe verstanden, dass eine andere Person die Finanzierung dieser Patenschaft übernimmt und ich gegenüber dem Kind der/die offizielle Pate/Patin bin.', 'child-sponsor-lang')?></label>
+                    <label><input type="radio" required data-msg="<?php _e('Angabe erforderlich', 'child-sponsor-lang'); ?>" name="writepray" value="WRPR+DON">
+                        <?php _e('Je m\'engage à [...] et je peux contribuer mensuellement à hauteur de :', 'child-sponsor-lang')?></label>
                 </div>
+            </div>
+            <div class="row hide" id="writepray-contribution" >
+                <div class="small-4 columns marg-top-10">
+                    <input class="ignore" type="number" min='1' max='42' placeholder="20.- CHF" required data-msg="<?php _e('Angabe erforderlich', 'child-sponsor-lang'); ?>" name="writepray-contribution" value="">
                 </div>
+            </div>
 
-          <?php } ?>
+<?php } ?>
 
           <!--        end Writeandpraystuff  -->
 

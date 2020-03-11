@@ -55,7 +55,7 @@
         /* Styling your links has become much simpler with the new Yahoo.  In fact, it falls in line with the main credo of styling in email, bring your styles inline.  Your link colors will be uniform across clients when brought inline.
         Bring inline: Yes. */
         a.lsv-box{padding:5px 8px;margin:10px 0 10px 10px; background-color:red; color:white !important;}
-        
+
         a {color:#005eb8; text-decoration: underline}
 
         ul li {
@@ -152,7 +152,7 @@
 
             <h1 style="text-align: center; padding: 25px 0;">Un grand MERCI pour votre engagement</h1>
 			<?php $child_meta = get_child_meta($session_data['childID']);?>
-			
+
 			<div style="padding: 0 30px;">
 			 <p>
 			<?php echo ($session_data['salutation'] == 'Herr') ? __('Lieber', 'compassion-letters') : __('Liebe', 'compassion-letters');?> <?php  $salutation = apply_filters( 'wpml_object_id', $session_data['salutation'], 'post', TRUE);
@@ -160,17 +160,17 @@
 			Bienvenue dans la grande famille de Compassion. Vous avez décidé de parrainer <?php echo $child_meta['name']; ?>. Merci de vous engager à changer la vie de cet enfant! C’est un jour de fête pour chaque enfant et sa famille lorsque les collaborateurs d’un centre d’accueil l’informent qu’un parrain s’intéresse à lui et a choisi de le soutenir. Vous êtes aujourd’hui la source d’une très grande joie! Au nom de <?php echo $child_meta['name']; ?>, MERCI !
 			 </p>
 			 <p> Vous recevrez dans les tous prochains jours toutes les informations concernant votre parrainage, par poste. Pour cela, merci de bien vérifier vos données ainsi que votre adresse postale.</p>
-			
-			
+
+
 			<h4> Vous nous avez transmis les informations suivantes:</h4>
-				 						
+
           <div style="padding: 0 30px;">
-	          
+
 	          	<p>Je prends en charge le parrainage de:  <strong><?php echo $child_meta['name']; ?></strong></p>
 
-	          
+
                 <h3>Enfant</h3>
-              
+
                 <ul>
                     <li><?php _e('Name', 'child-sponsor-lang'); ?>: <?php echo $child_meta['name']; ?></li>
                     <li><?php _e('Land','child-sponsor-lang'); ?>: <?php echo $child_meta['country']; ?></li>
@@ -197,49 +197,50 @@
                     <li><?php _e('Beruf', 'child-sponsor-lang'); ?>: <?php echo $session_data['Beruf']; ?></li>
 
                 </ul>
-				
-				    <?php    $wapr = isset($_SESSION['utm_source']) && $_SESSION['utm_source']=='wrpr';?> 
 
+				<?php
+        $wapr = isset($_SESSION['utm_source']) && $_SESSION['utm_source']=='wrpr';
+        if ($wapr) {
+            echo "<h3>Parrainage Write & Pray</h3>";
+            if (isset($session_data['writepray'])) {
+                if ($session_data['writepray'] == 'WRPR'){
+                  echo _e('Ich engagiere mich für mein Patenkind zu beten und ihm regelmässsig zu schreiben.  Ich habe verstanden, dass eine andere Person die Finanzierung dieser Patenschaft übernimmt und ich gegenüber dem Kind der/die offizielle Pate/Patin bin.', 'child-sponsor-lang');
+                } else if($session_data['writepray'] == 'WRPR+DON'){
+                  echo _e('Je m\'engage à [...] et je peux contribuer mensuellement à hauteur de : ', 'child-sponsor-lang');
+                  echo '<b>' . $session_data['writepray-contribution'] . 'CHF</b>';
+                }
+            }
+		   	} else {
+        ?>
 
-                <?php if ($wapr) { ?> 
-                
-               <h3>Parrainage Write & Pray</h3>
-               
-                 <?php if (isset($session_data['writepray'])) {
-	          echo _e('JA', 'child-sponsor-lang'); 
-	          } else {echo _e('NEIN', 'child-sponsor-lang');}
-           ?> 
-		   	
-		   	<?php } else { ?>
-				
 				<h3>Parrainage plus</h3>
 				  <?php if (isset($session_data['patenschaftplus'])) {
-				  		echo _e('JA', 'child-sponsor-lang'); 
+				  		echo _e('JA', 'child-sponsor-lang');
 				  		} else {echo _e('NEIN', 'child-sponsor-lang');}
-				  ?> 
+				  ?>
 
 				<h3>Méthode de paiement</h3>
-				
+
 					<?php
-                        $zahlung = ($session_data['zahlungsweise']);	                        
+                        $zahlung = ($session_data['zahlungsweise']);
 	                        if ($zahlung == 'dauerauftrag'){
 		                        echo _e('Monatlicher Dauerauftrag', 'child-sponsor-lang');
-	                        } 
+	                        }
 	                        elseif ($zahlung == 'lsv'){
 		                        echo _e('Direct Debit - LSV', 'child-sponsor-lang');
 		                        echo '&nbsp;<a class="lsv-box" href="https://www.compassion.ch/wp-content/uploads/documents_compassion/Formulaire_LSV_DD_FR.pdf">Téléchargez le formulaire de demande LSV</a>';
 	                        }
-                                                 
+
                         ?>
-                     	    <?php } ?>   
-                        
+                     	    <?php } ?>
+
                 <h3>Correspondance avec <?php echo $child_meta['name']; ?></h3>
-                
+
                 <?php
 	            if(!empty($session_data['language'])) {
 				foreach($session_data['language'] as $check) {
 				echo'<ul>';
-				echo  '<li>';			
+				echo  '<li>';
 				switch ($check) {
 
 				case 'französich':
@@ -249,15 +250,15 @@
 				case 'italienisch':
 				echo _e('Italienisch','child-sponsor-lang');
 				break;
-				
+
 				case 'spanisch':
 				echo _e('Spanisch','child-sponsor-lang');
 				break;
-				
+
 				case 'englisch':
 				echo _e('Englisch','child-sponsor-lang');
 				break;
-				
+
 				case 'portugiesisch':
 				echo _e('Portugiesisch','child-sponsor-lang');
 				break;
@@ -266,7 +267,7 @@
 				}
 				}
 				?>
-                
+
                 <h3>Votre réponse à la question : Comment avez-vous connu Compassion ?</h3>
                 <ul>
                    <li>
@@ -279,22 +280,22 @@
                            echo _e($session_data['consumer_source_text'], 'child-sponsor-lang');
                        }?>
                    </li>
-                </ul> 
+                </ul>
 
 				<h3>Envoyez-moi des informations sur les autres possibilités d'engagement au profit des enfants démunis.</h3>
 						<?php if (isset($session_data['mithelfen'])) {
-				  		echo _e('JA', 'child-sponsor-lang'); 
+				  		echo _e('JA', 'child-sponsor-lang');
 				  		} else {echo _e('NEIN', 'child-sponsor-lang');}
-				  ?> 
+				  ?>
 
                 <hr>
-                
+
                <p>Si vous avez des questions au sujet de votre parrainage, nous restons volontiers à votre disposition: Téléphone: 024 434 21 24 (lundi à vendredi de 8h00 à 16h00) – Adresse e-mail: info@compassion.ch</p>
 
 			   <p>Merci du fond du cœur d’avoir choisi d’investir dans la vie d’un enfant. Michelle aux Philippines a grandi dans un quartier pauvre où régnait trafic et consommation de drogue et prostitution. Parrainée, elle a pu aller à l’école, suivre des études. Aujourd’hui, elle dirige l’ONG qu’elle a créée et vient en aide aux femmes victimes d’esclavage moderne. Votre parrainage va transformer une vie durablement.<br/><br/>
 				   Très cordialement,<br/>Carole Rochat pour l’équipe de Compassion Suisse</p>
             </div>
-            
+
             <p style="text-align: center;padding-top:30px"><img src="<?php echo get_template_directory_uri(); ?>/assets/img/compassion-logo-dark-fr.png" width="242" height="93" alt="" /><p>
 
 

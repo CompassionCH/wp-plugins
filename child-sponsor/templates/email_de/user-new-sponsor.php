@@ -150,22 +150,22 @@
 
             <h1 style="text-align: center; padding: 25px 0;">Ein grosses MERCI für dein Engagement	</h1>
 			<?php $child_meta = get_child_meta($session_data['childID']);?>
-			
+
 			<div style="padding: 0 30px;">
 			 <p>
 			<?php echo ($session_data['salutation'] == 'Herr') ? __('Lieber', 'compassion-letters') : __('Liebe', 'compassion-letters');?> <?php echo $session_data['first_name']; ?> <br /><br />
 			Du hast dich entschieden, <?php echo $child_meta['name']; ?> durch eine Patenschaft zu unterstützen. Vielen Dank, dass mit deiner Hilfe das Leben dieses Kindes verändert wird! Kannst du dir die Riesenfreude vorstellen, wenn unsere Mitarbeitenden vor Ort dem Kind mitteilen können, dass es jetzt auf der anderen Seite der Welt eine Patin oder einen Paten hat? DANKE im Namen von <?php echo $child_meta['name']; ?> und seiner/ihrer Familie!
 			 </p>
 			 <p>Du wirst bald per Post alle Informationen über deine Patenschaft erhalten. Überprüfe dazu bitte deine Angaben:</p>
-			
-				 						
+
+
           <div style="padding: 0 30px;">
-	          
+
 	          	<p>Ich übernehme die Patenschaft für: <strong><?php echo $child_meta['name']; ?></strong></p>
 
-	          
+
                 <h3>Patenkind</h3>
-              
+
                 <ul>
                     <li><?php _e('Name', 'child-sponsor-lang'); ?>: <?php echo $child_meta['name']; ?></li>
                     <li><?php _e('Land','child-sponsor-lang'); ?>: <?php echo $child_meta['country']; ?></li>
@@ -192,45 +192,47 @@
                     <li><?php _e('Beruf', 'child-sponsor-lang'); ?>: <?php echo $session_data['Beruf']; ?></li>
 
                 </ul>
-                
-                <!--              Writeandpraystuff  -->
-                
-				<?php    $wapr = isset($_SESSION['utm_source']) && $_SESSION['utm_source']=='wrpr';?> 
 
-                <?php if ($wapr) { ?> 
-				<h3>Patenschaft Write & Pray</h3>
-               
-                 <?php if (isset($session_data['writepray'])) {
-	          echo _e('JA', 'child-sponsor-lang'); 
-	          } else {echo _e('NEIN', 'child-sponsor-lang');}
-           		?> 
-		   	
-		   	<?php } else { ?>
+        <!--              Writeandpraystuff  -->
+        <?php
+        $wapr = isset($_SESSION['utm_source']) && $_SESSION['utm_source']=='wrpr';
+        if ($wapr) {
+            echo "<h3>Patenschaft Write & Pray</h3>";
+            if (isset($session_data['writepray'])) {
+                if ($session_data['writepray'] == 'WRPR'){
+                  echo _e('Ich engagiere mich für mein Patenkind zu beten und ihm regelmässsig zu schreiben.  Ich habe verstanden, dass eine andere Person die Finanzierung dieser Patenschaft übernimmt und ich gegenüber dem Kind der/die offizielle Pate/Patin bin.', 'child-sponsor-lang');
+                } else if($session_data['writepray'] == 'WRPR+DON'){
+                  echo _e('Je m\'engage à [...] et je peux contribuer mensuellement à hauteur de : ', 'child-sponsor-lang');
+                  echo '<b>' . $session_data['writepray-contribution'] . 'CHF</b>';
+                }
+            }
+		   	} else {
+        ?>
 		   	<!--              END Writeandpraystuff  -->
 
 				<h3>Patenschaft Plus</h3>
 				  <?php if (isset($session_data['patenschaftplus'])) {
-				  		echo _e('JA', 'child-sponsor-lang'); 
+				  		echo _e('JA', 'child-sponsor-lang');
 				  		} else {echo _e('NEIN', 'child-sponsor-lang');}
-				  ?> 
+				  ?>
 
 				<h3>Zahlungsweise</h3>
-				
+
 					<?php
-                        $zahlung = ($session_data['zahlungsweise']);	                        
+                        $zahlung = ($session_data['zahlungsweise']);
 	                        if ($zahlung == 'dauerauftrag'){
 		                        echo _e('Monatlicher Dauerauftrag', 'child-sponsor-lang');
-	                        } 
+	                        }
 	                        elseif ($zahlung == 'lsv'){
 		                        echo _e('Direct Debit - LSV', 'child-sponsor-lang');
 		                        echo '&nbsp;<a class="lsv-box" href="https://www.compassion.ch/wp-content/uploads/documents_compassion/Formulaire_LSV_DD_DE.pdf">LSV Formular aufladen</a>';
 	                        }
-                                                 
+
                         ?>
-                    <?php } ?>   
+                    <?php } ?>
 
                 <h3>Korrespondenz mit <?php echo $child_meta['name']; ?></h3>
-                
+
                      <?php
 	            if(!empty($session_data['language'])) {
 				foreach($session_data['language'] as $check) {
@@ -245,15 +247,15 @@
 				case 'italienisch':
 				echo _e('Italienisch','child-sponsor-lang');
 				break;
-				
+
 				case 'spanisch':
 				echo _e('Spanisch','child-sponsor-lang');
 				break;
-				
+
 				case 'englisch':
 				echo _e('Englisch','child-sponsor-lang');
 				break;
-				
+
 				case 'portugiesisch':
 				echo _e('Portugiesisch','child-sponsor-lang');
 				break;
@@ -275,22 +277,22 @@
                         }?>
                     </li>
                 </ul>
-                
-                
+
+
                 <h3>Sende mir mehr Informationen, wie ich mich für Kinder in Not einsetzen kann</h3>
 						<?php if (isset($session_data['mithelfen'])) {
-				  		echo _e('JA', 'child-sponsor-lang'); 
+				  		echo _e('JA', 'child-sponsor-lang');
 				  		} else {echo _e('NEIN', 'child-sponsor-lang');}
-				  ?> 
-				  
+				  ?>
+
 				    <hr>
-                
+
                <p>Wenn du noch Fragen zu deiner Patenschaft hast, melde dich gerne bei uns: Tel : 031 552 21 21 (Montag bis Freitag von 8.00-16.00 Uhr) - Email: info@compassion.ch</p>
 
 			   <p>Herzlich willkommen in der grossen internationalen Familie von Compassion!<br/>
 				   Freundliche Grüsse,<br/>Carole Rochat und das Compassion Schweiz Team.</p>
             </div>
-            
+
             <p style="text-align: center;padding-top:30px"><img src="<?php echo get_template_directory_uri(); ?>/assets/img/compassion-logo-dark-de.png" width="242" height="93" alt="" /><p>
 
 

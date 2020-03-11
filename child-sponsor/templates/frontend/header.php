@@ -22,19 +22,51 @@ jQuery(document).ready(function($) {
         var match = regexp.test(value);
         if (!match)
           return false;
-          
+
         value = value.replace(/[\.\-]/g, "/");
         value = value.replace(/^([1-9])\//, "0$1/");
         value = value.replace(/\/([1-9])\//, "/0$1/");
         $(element).val(value);
         return true;
-    }, "Please enter a valid date");
+    }, function(value, element){
+        return $(element).data('default-msg')
+    });
+
+    $.validator.addMethod("wrprBirthdate", function(value, element) {
+        var $el = $(element)
+        var age_limit = $el.data('wrpr-age-limit');
+        if( !$el.data('wrpr') || !age_limit ){
+            return true;
+        }
+        // If it is a write&pray sponsorship, we need to check the user's age
+        var parts = value.split("/");
+        var date = new Date(parseInt(parts[2], 10),
+                            parseInt(parts[1], 10) - 1,
+                            parseInt(parts[0], 10));
+        var age = Math.abs(new Date(Date.now() - date.getTime()).getUTCFullYear() - 1970);
+        return !age_limit || age < age_limit;
+
+    }, function(params, element) {
+        // if he's older than age_limit we show him a link to the usual sponsorship page
+        var href = window.location.href
+        if (href.includes('utm_source')) {
+            href = href.replace(/(utm_source=).*?($|&)/, '$1button$2')
+        }else{
+            href = href + '&utm_source=button'
+        }
+        return $("<a>", {
+            href: href,
+            style: 'color:white',
+            text: $(element).data('wrpr-age-limit-msg')
+        });
+    });
 
     $('.child-sponsor form').validate({
         ignore: ".ignore, .ignore *",
         rules: {
             birthday: {
-                slashDate: true
+                slashDate: true,
+                wrprBirthdate: true
             }
         },
         errorPlacement: function(error, element) {
@@ -44,6 +76,14 @@ jQuery(document).ready(function($) {
             else{
                 element.after(error);
             }
+        }
+    });
+
+    $('input:radio[name="writepray"]').on('ifChecked', function(){
+        if ($(this).val() == "WRPR+DON") {
+            $("#writepray-contribution").removeClass('hide').find('input').removeClass('ignore')
+        }else {
+            $("#writepray-contribution").addClass('hide').find('input').addClass('ignore')
         }
     });
 
