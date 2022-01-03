@@ -16,7 +16,7 @@ msgstr ""
 
 #: templates/frontend/inputs.php:33
 msgid "Aktuelle Nothilfe"
-msgstr "Emergenza calamità naturali"
+msgstr "Emergenza calamità naturalis"
 
 #: templates/cadeau/inputs.php:18
 msgid "Allgemeines Geschenk"

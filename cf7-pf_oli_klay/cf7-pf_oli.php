@@ -405,7 +405,7 @@ class Compassion_Donation_Form {
         // Setup API client
         $client = new ApiClient($this->userId, $this->secret);
         // Check latest transactions
-        $results = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE odoo_status = '" . self::SUBMITTED_TO_PF . "' AND pf_payid IS NOT NULL ORDER BY id desc LIMIT 10;");
+        $results = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE odoo_status = '" . self::SUBMITTED_TO_PF . "' AND pf_payid IS NOT NULL ORDER BY id desc LIMIT 3;");
         foreach ($results as $result) {
             try {
                 $transaction = $client->getTransactionService()->read($this->spaceId, $result->pf_payid);

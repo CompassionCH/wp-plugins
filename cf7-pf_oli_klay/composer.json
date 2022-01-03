@@ -1,0 +1,6 @@
+{
+    "require": {
+        "sprain/swiss-qr-bill": "^3.2",
+        "postfinancecheckout/sdk": "3.0.1"
+    }
+}

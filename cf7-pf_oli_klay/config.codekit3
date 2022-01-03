@@ -214,20 +214,20 @@
 		"oAP": "/donation-form-backup-201910210806140.pot~",
 		"oF": 0
 		},
-	"/donation-form-backup-202103291417510.pot~": {
-		"cB": 0,
-		"ft": 8192,
-		"hM": 0,
-		"oA": 2,
-		"oAP": "/donation-form-backup-202103291417510.pot~",
-		"oF": 0
-		},
 	"/donation-form.pot": {
 		"cB": 0,
 		"ft": 8192,
 		"hM": 0,
 		"oA": 2,
 		"oAP": "/donation-form.pot",
+		"oF": 0
+		},
+	"/lang/donation-form-fr_FR-backup-201910210823020.po~": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/lang/donation-form-fr_FR-backup-201910210823020.po~",
 		"oF": 0
 		},
 	"/lang/donation-form-fr_FR.mo": {
@@ -244,6 +244,14 @@
 		"hM": 0,
 		"oA": 2,
 		"oAP": "/lang/donation-form-fr_FR.po",
+		"oF": 0
+		},
+	"/lang/donation-form-it_IT-backup-201910210825080.po~": {
+		"cB": 0,
+		"ft": 8192,
+		"hM": 0,
+		"oA": 2,
+		"oAP": "/lang/donation-form-it_IT-backup-201910210825080.po~",
 		"oF": 0
 		},
 	"/lang/donation-form-it_IT.mo": {

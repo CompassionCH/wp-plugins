@@ -7,145 +7,248 @@
  *  - CF7PF_PLUGIN_DIR_URL
  */
 ?>
-<script type="text/javascript">
-    jQuery( document ).ready(function($) {
-        // Set the reason for the donnation.
-        if(window.location.hash){
-            var hashParams = window.location.hash.substr(1).split('&'); // substr(1) to remove the `#`
-            for(var i = 0; i < hashParams.length; i++){
-                var p = hashParams[i].split('=');
-                document.getElementById(p[0]).value = decodeURIComponent(p[1]);}}
-
-        // Validate the form
-        $('.child-sponsor form').validate({
-            ignore: ".ignore, .ignore *",
-            rules: {
-                wert: {
-                    number: true
-                },
-                email: {
-                    email: true
-                },
-                hiddenRecaptcha: {
-                    required: function () {
-                        if (grecaptcha.getResponse() == '') {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-            },
-            errorPlacement: function(error, element) {
-                if((element.attr('type') === 'radio')){
-                    element.parent().before(error);
-                }
-                else{
-                    element.after(error);
-                }
-            }
-        });
-    });
-</script>
-
-<ul class="tabs" data-tabs id="donation-tabs">
-    <li class="tabs-title is-active">
-        <a href="#panel-online-donation" aria-selected="true">
-            <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
-            <?php _e('Online spenden', 'donation-form') ?>
-        </a>
-    </li>
-    <li class="tabs-title">
-        <a href="#panel-bank-transfer-donation">
-            <i class="fa fa-university" aria-hidden="true"></i>
-            <?php _e('Spende per Banküberweisung', 'donation-form') ?>
-        </a>
-    </li>
-</ul>
-<div class="tabs-content section step-1 child-sponsor" data-tabs-content="donation-tabs">
-    <div class="tabs-panel is-active" id="panel-online-donation">
-        <div class="row">
-            <form method="POST" action="?step=redirect"  class="large-12 large-centered medium-12 medium-centered column" >
-                <p><?php _e('Spende über eine sichere Online-Zahlung, mit Postfinance, Kreditkarte oder Twint.','donation-form' )?></p>
-
-                <?php include($donation_inputs_template); ?>
-
-                <h4 class="text-uppercase"><?php _e('Meine persönlichen Daten', 'child-sponsor-lang'); ?></h4>
-                <div class="row">
-                    <div class="small-12 medium-4 columns">
-                        <label class="text-left middle"><?php _e('Vorname, Nachname', 'donation-form'); ?></label>
-                    </div>
-                    <div class="small-12 medium-8 columns">
-                        <input type="text" required data-msg="<?php _e('Name erforderlich', 'child-sponsor-lang'); ?>" class="input-field" id="pname" name="pname" value="<?php echo $_SESSION["pname"]?>">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="small-12 medium-4 columns">
-                        <label class="text-left middle"><?php _e('Strasse/Hausnr.', 'child-sponsor-lang'); ?></label>
-                    </div>
-                    <div class="small-12 medium-8 columns">
-                        <input type="text" required data-msg="<?php _e('Strasse erforderlich', 'child-sponsor-lang'); ?>" class="input-field" id="street" name="street" value="<?php echo $_SESSION["pstreet"]?>">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="small-12 medium-4 columns">
-                        <label class="text-left middle"><?php _e('PLZ/Ort', 'child-sponsor-lang'); ?></label>
-                    </div>
-                    <div class="small-6 medium-2 columns">
-                        <input type="text" required data-msg="<?php _e('PLZ erforderlich', 'child-sponsor-lang'); ?>" class="input-field" id="zipcode" name="zipcode" value="<?php echo $_SESSION["pzip"]?>">
-                    </div>
-                    <div class="small-6 medium-6 columns no-padding-left">
-                        <input type="text" required data-msg="<?php _e('Stadt erforderlich', 'child-sponsor-lang'); ?>" class="input-field" id="city" name="city" value="<?php echo $_SESSION["pcity"]?>">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="small-12 medium-4 columns">
-                        <label class="text-left middle"><?php _e('Land', 'child-sponsor-lang'); ?></label>
-                    </div>
-                    <div class="mall-12 medium-8 columns">
-                        <input type="text" required data-msg="<?php _e('Länd erforderlich', 'child-sponsor-lang'); ?>" class="input-field" id="country" name="country" value="<?php echo $_SESSION["pcountry"]?>">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="small-12 medium-4 columns">
-                        <label class="text-left middle"><?php _e('E-Mail-Adresse', 'child-sponsor-lang'); ?></label>
-                    </div>
-                    <div class="small-12 medium-8 columns">
-                        <input type="email" class="input-field" required data-msg="<?php _e('E-Mail-Adresse erforderlich', 'child-sponsor-lang'); ?>" id="email" name="email" value="<?php echo $_SESSION["email"]?>">
-                <p><?php _e('Deine Spende an Compassion ist in der Schweiz steuerabzugsberechtigt.','donation-form' )?></p>
-                    </div>
-                </div>
-
-                <div class="form-action">
-                    <input type="submit" class="button button-blue button-small click_donate" value="<?php _e('Jetzt spenden', 'donation-form'); ?>"/>
-                </div>
-            </form>
+<form id="donation_form" method="POST" action="?step=redirect" class="">
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label class="text-left middle"><?php _e("Méthode de versement", "donation-form"); ?></label>
         </div>
-    </div>
-
-    <div class="tabs-panel" id="panel-bank-transfer-donation">
-        <div class="row">
-            <div class="large-12 large-centered medium-12 medium-centered column">
-                <p class="text-center middle"><?php _e('Du kannst per Post- oder Banküberweisung spenden.<br/>  Nachfolgend findest du die Informationen für die Zahlung. ', 'donation-form') ?></p>
-                <h5 class="text-center middle">
-                    Postfinance CCP 17-312562-0 <br/>
-                    IBAN CH07 0900 0000 1731 2562 0<br/>
-                    BIC POFICHBEXXX
-                </h5>
-                <?php if (isset($bank_transfer_comment)) : ?>
-                <p class="text-center middle"><?php echo $bank_transfer_comment ?></p>
-                <?php endif; ?>
-                <div class="text-center">
-                    <img class="text-center" src="<?php
-                        $qs = http_build_query(array(
-                            'reason' => $bank_transfer_reason,
-                            'account' => "17-312562-0",
-                            'for' => '<tspan x="0">' . __('Compassion Schweiz', 'compassion') . '</tspan><tspan x="0" dy="1.4em">1400 Yverdon-les-Bains</tspan>',
-                        ));
-                        echo CF7PF_PLUGIN_DIR_URL . "/templates/bank-transfer.php?" . $qs
-                    ?>">
-                </div>
+        <div class="small-12 medium-8 columns">
+            <div style="margin-bottom: 16px;">
+                <label style="display:inline-block; margin-right:8px;">
+                    <input name="payment_method" type="radio" value="online" checked>
+                    <?php _e("En ligne", "donation-form"); ?>
+                </label>
+                <label style="display:inline-block">
+                    <input name="payment_method" type="radio" value="slip">
+                    <?php _e("Par bulletin", "donation-form"); ?>
+                </label>
             </div>
         </div>
     </div>
+
+    <?php include($donation_inputs_template); ?>
+
+    <div class="row">
+        <div class="small-12 medium-12 columns">
+            <h4 class="text-uppercase"><?php _e("Meine persönlichen Daten", "child-sponsor-lang"); ?></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label class="text-left middle">
+                <?php _e("Vorname, Nachname", "donation-form"); ?>
+            </label>
+        </div>
+        <div class="small-12 medium-8 columns">
+            <input name="pname" type="text" required class="input-field" value="<?php echo $_SESSION["pname"]?>">
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label class="text-left middle">
+                <?php _e("Strasse/Hausnr.", "child-sponsor-lang"); ?>
+            </label>
+        </div>
+        <div class="small-12 medium-8 columns">
+            <input name="street" type="text" required class="input-field" value="<?php echo $_SESSION["pstreet"]?>">
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label class="text-left middle">
+                <?php _e("PLZ/Ort", "child-sponsor-lang"); ?>
+            </label>
+        </div>
+        <div class="small-6 medium-2 columns">
+            <input name="zipcode" type="text" required class="input-field"  value="<?php echo $_SESSION["pzip"]?>">
+        </div>
+        <div class="small-6 medium-6 columns">
+            <input name="city" type="text" required class="input-field" value="<?php echo $_SESSION["pcity"]?>">
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label class="text-left middle">
+                <?php _e("Land", "child-sponsor-lang"); ?>
+            </label>
+        </div>
+        <div class="mall-12 medium-8 columns">
+            <select name="country" required class="input-field" >
+                <?php include "countries_options.php" ?>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 medium-4 columns">
+            <label class="text-left middle">
+                <?php _e("E-Mail-Adresse", "child-sponsor-lang"); ?>
+            </label>
+        </div>
+        <div class="small-12 medium-8 columns">
+            <?php /* somehow the email address can"t have only a single letter as TLD for the payments
+            thus the original html5 email validation algorithm doesnt satify our needs. */ ?>
+            <input name="email" type="email" required pattern="^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,}$" class="input-field" value="<?php echo $_SESSION["email"]?>">
+        </div>
+    </div>
+    <div class="row text-center">
+        <input id="submit_button" class="button button-blue button-small click_donate"/>
+    </div>
+    <div class="row text-center">
+        <p>
+            <?php _e("Deine Spende an Compassion ist in der Schweiz steuerabzugsberechtigt.", "donation-form")?>
+        </p>
+    </div>
+</form>
+
+<div class="row">
+    <div id="qr_bill" class="text-center" hidden>
+        <div id="qr_bill_svg"></div>
+        <input id="qr_bill_print" class="button button-blue button-small click_donate" value="<?php _e("Imprimer", "donation-form"); ?>"/>
+        <p>
+            <i>
+                <?php _e("Vous pouvez également scanner le code QR directement sur votre écran", "donation-form"); ?>
+            </i>
+        </p>
+    </div>
 </div>
+
+<script type="text/javascript">
+// Set the reason for the donnation.
+if(window.location.hash) {
+    let hashParams = window.location.hash.substr(1).split("&"); // substr(1) to remove the `#`
+    for(let i = 0; i < hashParams.length; i++) {
+        let p = hashParams[i].split("=");
+        document.getElementById(p[0]).value = decodeURIComponent(p[1]);
+    }
+}
+
+
+let language = "<?php echo substr(get_bloginfo("language"), 0, 2) ?>";
+let available_languages = ["en", "fr", "de", "it"];
+let donation_form = document.getElementById("donation_form");
+let submit_button = document.getElementById("submit_button");
+let text_submit_button_online = "<?php _e("Jetzt spenden", "donation-form"); ?>";
+let text_submit_button_slip = "<?php _e("Générer le bulletin", "donation-form"); ?>";
+
+let qr_bill = document.getElementById("qr_bill");
+let qr_bill_svg = document.getElementById("qr_bill_svg");
+let qr_bill_print = document.getElementById("qr_bill_print");
+let qr_bill_url = "<?php echo CF7PF_PLUGIN_DIR_URL . "templates/qr_bill.php" ?>";
+
+let payment_method = document.getElementsByName("payment_method")[1];
+let payment_parent = payment_method.parentElement
+let email = document.getElementsByName("email")[0];
+
+function set_form_online() {
+    email.disabled = false;
+    submit_button.value = text_submit_button_online;
+}
+
+function set_form_slip() {
+    email.disabled = true;
+    email.value = "";
+    submit_button.value = text_submit_button_slip;
+}
+
+set_form_online()
+
+
+window.addEventListener("DOMContentLoaded", (event) => {
+    const observer = new MutationObserver((e)=> {
+        let is_slip = payment_method.checked;
+        if(is_slip)
+            set_form_slip();
+        else
+            set_form_online();
+    });
+    observer.observe(payment_parent, {attributes:true,subtree: true});
+});
+
+qr_bill_print.addEventListener("click", (e) => {
+    let print_window = create_print_window()
+    print_window.print();
+    print_window.close();
+});
+
+qr_bill_svg.addEventListener("click", (e) => {
+    create_print_window()
+});
+
+function create_print_window() {
+    let el = document.createElement("div");
+    el.innerHTML = qr_bill_svg.innerHTML;
+    el.style.border = "1px dashed black";
+    let content = "<html><body>" + el.outerHTML + "</body></html>";
+
+    let print_window = window.open("");
+    print_window.document.write(content);
+    print_window.document.close();
+    print_window.focus();
+    return print_window
+}
+
+
+async function fetch_payment_slip() {
+    data = {
+        "debtor": {
+            "name": donation_form.pname.value,
+            "street": donation_form.street.value,
+            "no": "",
+            "zip": donation_form.zipcode.value,
+            "city": donation_form.city.value,
+            "country": donation_form.country.value,
+        },
+        "amount": parseFloat(donation_form.wert.value),
+        "additional_informations": donation_form.fonds.selectedOptions[0].innerText,
+        "language": available_languages.includes(language) ? language : "en",
+    };
+
+    options = {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify(data)
+    };
+
+    const response = await fetch(qr_bill_url, options)
+    .then(response => response.text())
+    .then(function(data){
+        qr_bill.hidden = false;
+        qr_bill_svg.innerHTML = data;
+        let svg = qr_bill_svg.children[0];
+        svg.style.width = "90%";
+        svg.style.height = "auto";
+        svg.style.cursor = "zoom-in";
+        qr_bill_svg.scrollIntoView({ behavior: "smooth", block: "center", inline: "center"});
+    });
+}
+
+submit_button.addEventListener("click", (e) => {
+
+    if(!donation_form.checkValidity()) {
+        donation_form.reportValidity();
+        return;
+    }
+
+    if(donation_form.payment_method.value == "online") {
+        donation_form.submit();
+    }
+    else if (donation_form.payment_method.value == "slip") {
+        fetch_payment_slip();
+    }
+
+});
+
+// donation_form.pname.setCustomValidity("<?php _e("Name erforderlich", "child-sponsor-lang"); ?>");
+// donation_form.street.setCustomValidity("<?php _e("Strasse erforderlich", "child-sponsor-lang"); ?>");
+// donation_form.zipcode.setCustomValidity("<?php _e("PLZ erforderlich", "child-sponsor-lang"); ?>");
+// donation_form.city.setCustomValidity("<?php _e("Stadt erforderlich", "child-sponsor-lang"); ?>");
+// donation_form.country.setCustomValidity(" <?php _e("Länd erforderlich", "child-sponsor-lang"); ?>");
+// donation_form.email.setCustomValidity("<?php _e("E-Mail-Adresse erforderlich", "child-sponsor-lang"); ?>");
+</script>
