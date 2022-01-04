@@ -1,9 +1,11 @@
+<div id="type_flag" data-type="cadeau">
+
 <div class="row">
     <div class="small-12 medium-4 columns">
         <label class="text-left middle"><?php _e('Mein Betrag in CHF', 'donation-form'); ?></label>
     </div>
     <div class="small-12 medium-8 columns">
-        <input type="number" placeholder="<?php _e('bitte nur Zahlen', 'donation-form'); ?>"required data-msg="<?php _e('Betrag erforderlich', 'donation-form'); ?>" class="input-field" name="wert" value="<?php echo $_SESSION["fund_amount"]?>">
+        <input id="wert" type="number" step="0.01" required class="input-field" name="wert" value="<?php echo (isset($session_data['wert'])) ? $session_data['wert'] : ''; ?>">
     </div>
 </div>
 <div class="row">
@@ -26,6 +28,6 @@
         <label class="text-left middle"><?php _e('Patenkindnummer', 'donation-form'); ?></label>
     </div>
     <div class="small-12 medium-8 columns">
-        <input type="text" required data-msg="<?php _e('Patenkindnummer erforderlich', 'donation-form'); ?>" placeholder="<?php _e('ie : BO012301234', 'donation-form'); ?>" class="input-field" id="refenfant" name="refenfant" value="<?php echo $_SESSION["child_ref"]?>">
+        <input name="refenfant" type="text" required pattern="^[a-zA-Z]{2}[0-9]{9}$" placeholder="<?php _e('ie : BO012301234', 'donation-form'); ?>" class="input-field" value="<?php echo $_SESSION["child_ref"]?>">
     </div>
 </div>

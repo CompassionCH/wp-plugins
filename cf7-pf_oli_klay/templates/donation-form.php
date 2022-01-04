@@ -15,7 +15,7 @@
         <div class="small-12 medium-8 columns">
             <div style="margin-bottom: 16px;">
                 <label style="display:inline-block; margin-right:8px;">
-                    <input name="payment_method" type="radio" value="online" checked>
+                    <input id="payment_method_online" name="payment_method" type="radio" value="online" checked>
                     <?php _e("En ligne", "donation-form"); ?>
                 </label>
                 <label style="display:inline-block">
@@ -78,20 +78,19 @@
             </select>
         </div>
     </div>
-    <div class="row">
+    <div class="row online">
         <div class="small-12 medium-4 columns">
             <label class="text-left middle">
                 <?php _e("E-Mail-Adresse", "child-sponsor-lang"); ?>
             </label>
         </div>
         <div class="small-12 medium-8 columns">
-            <?php /* somehow the email address can"t have only a single letter as TLD for the payments
-            thus the original html5 email validation algorithm doesnt satify our needs. */ ?>
+            <?php /* the original html5 email validation algorithm doesnt satify our needs. */ ?>
             <input name="email" type="email" required pattern="^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,}$" class="input-field" value="<?php echo $_SESSION["email"]?>">
         </div>
     </div>
     <div class="row text-center">
-        <input id="submit_button" class="button button-blue button-small click_donate"/>
+        <button id="submit_button" type="button" class="button button-blue button-small click_donate"></button>
     </div>
     <div class="row text-center">
         <p>
@@ -103,7 +102,7 @@
 <div class="row">
     <div id="qr_bill" class="text-center" hidden>
         <div id="qr_bill_svg"></div>
-        <input id="qr_bill_print" class="button button-blue button-small click_donate" value="<?php _e("Imprimer", "donation-form"); ?>"/>
+        <button id="qr_bill_print" type="button" class="button button-blue button-small click_donate"><?php _e("Imprimer", "donation-form"); ?></button>
         <p>
             <i>
                 <?php _e("Vous pouvez également scanner le code QR directement sur votre écran", "donation-form"); ?>
@@ -122,7 +121,7 @@ if(window.location.hash) {
     }
 }
 
-
+let type_flag = document.getElementById("type_flag").dataset.type;
 let language = "<?php echo substr(get_bloginfo("language"), 0, 2) ?>";
 let available_languages = ["en", "fr", "de", "it"];
 let donation_form = document.getElementById("donation_form");
@@ -139,15 +138,25 @@ let payment_method = document.getElementsByName("payment_method")[1];
 let payment_parent = payment_method.parentElement
 let email = document.getElementsByName("email")[0];
 
+
+jQuery('#payment_method_online').on('ifChanged', function () {
+    if (jQuery(this).prop('checked')) {
+        set_form_online()
+    } else {
+        set_form_slip()
+    }
+});
+
 function set_form_online() {
-    email.disabled = false;
-    submit_button.value = text_submit_button_online;
+    jQuery('.online').show()
+    jQuery('input[name="email"]').attr('required', true);
+    submit_button.innerHTML = text_submit_button_online;
 }
 
 function set_form_slip() {
-    email.disabled = true;
-    email.value = "";
-    submit_button.value = text_submit_button_slip;
+    jQuery('.online').hide()
+    jQuery('input[name="email"]').attr('required', false);
+    submit_button.innerHTML = text_submit_button_slip;
 }
 
 set_form_online()
@@ -189,6 +198,29 @@ function create_print_window() {
 
 
 async function fetch_payment_slip() {
+    let additional_informations = "";
+    let amount = 0;
+
+    if(type_flag == "csp" && jQuery('input[name="wert"]').attr('required') != 'required')
+    {
+        amount = parseFloat(donation_form.fonds.selectedOptions[0].dataset.v);
+        additional_informations += donation_form.fonds.selectedOptions[0].innerText;
+    }
+    else
+    {
+        amount = parseFloat(donation_form.wert.value);
+    }
+
+    if(type_flag == "frontend" || type_flag == "cadeau")
+    {
+        additional_informations += donation_form.fonds.selectedOptions[0].innerText;
+    }
+    if(type_flag == "cadeau")
+    {
+        additional_informations += " " + donation_form.refenfant.value;
+    }
+
+
     data = {
         "debtor": {
             "name": donation_form.pname.value,
@@ -198,8 +230,8 @@ async function fetch_payment_slip() {
             "city": donation_form.city.value,
             "country": donation_form.country.value,
         },
-        "amount": parseFloat(donation_form.wert.value),
-        "additional_informations": donation_form.fonds.selectedOptions[0].innerText,
+        "amount": amount,
+        "additional_informations": additional_informations,
         "language": available_languages.includes(language) ? language : "en",
     };
 
@@ -232,14 +264,17 @@ async function fetch_payment_slip() {
 submit_button.addEventListener("click", (e) => {
 
     if(!donation_form.checkValidity()) {
+        console.log("validity");
         donation_form.reportValidity();
         return;
     }
 
     if(donation_form.payment_method.value == "online") {
+        console.log("online");
         donation_form.submit();
     }
     else if (donation_form.payment_method.value == "slip") {
+        console.log("slip");
         fetch_payment_slip();
     }
 
