@@ -1,4 +1,4 @@
-<div id="type_flag" data-type="frontend">
+<param id="type_flag" value="frontend"/>
 
 <div class="row">
     <div class="small-12 medium-4 columns">

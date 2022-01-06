@@ -1,4 +1,4 @@
-<div id="type_flag" data-type="single">
+<param id="type_flag" value="single"/>
 
 <div class="row">
     <div class="small-12 medium-4 columns">

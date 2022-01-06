@@ -121,7 +121,7 @@ if(window.location.hash) {
     }
 }
 
-let type_flag = document.getElementById("type_flag").dataset.type;
+let type_flag = document.getElementById("type_flag").value;
 let language = "<?php echo substr(get_bloginfo("language"), 0, 2) ?>";
 let available_languages = ["en", "fr", "de", "it"];
 let donation_form = document.getElementById("donation_form");
