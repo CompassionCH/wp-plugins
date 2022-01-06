@@ -174,16 +174,6 @@ window.addEventListener("DOMContentLoaded", (event) => {
 });
 
 qr_bill_print.addEventListener("click", (e) => {
-    let print_window = create_print_window()
-    print_window.print();
-    print_window.close();
-});
-
-qr_bill_svg.addEventListener("click", (e) => {
-    create_print_window()
-});
-
-function create_print_window() {
     let el = document.createElement("div");
     el.innerHTML = qr_bill_svg.innerHTML;
     el.style.border = "1px dashed black";
@@ -193,8 +183,9 @@ function create_print_window() {
     print_window.document.write(content);
     print_window.document.close();
     print_window.focus();
-    return print_window
-}
+    print_window.print();
+    print_window.close();
+});
 
 
 async function fetch_payment_slip() {
@@ -256,7 +247,6 @@ async function fetch_payment_slip() {
         let svg = qr_bill_svg.children[0];
         svg.style.width = "90%";
         svg.style.height = "auto";
-        svg.style.cursor = "zoom-in";
         qr_bill_svg.scrollIntoView({ behavior: "smooth", block: "center", inline: "center"});
     });
 }
@@ -264,17 +254,14 @@ async function fetch_payment_slip() {
 submit_button.addEventListener("click", (e) => {
 
     if(!donation_form.checkValidity()) {
-        console.log("validity");
         donation_form.reportValidity();
         return;
     }
 
     if(donation_form.payment_method.value == "online") {
-        console.log("online");
         donation_form.submit();
     }
     else if (donation_form.payment_method.value == "slip") {
-        console.log("slip");
         fetch_payment_slip();
     }
 
