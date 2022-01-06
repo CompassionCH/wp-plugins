@@ -39,7 +39,7 @@
         <!-- <label class="text-left middle"><?php _e('Je désire faire un don unique', 'donation-form'); ?></label> -->
     </div>
     <div class="small-12 medium-8 columns">
-        <input id="wert" type="number" step="0.01" required class="input-field" name="wert" value="<?php echo (isset($session_data['wert'])) ? $session_data['wert'] : ''; ?>">
+        <input id="wert" type="number" step="0.01" required class="input-field" name="wert" value="<?php echo $_SESSION["fund_amount"] ?>">
     </div>
 </div>
 
