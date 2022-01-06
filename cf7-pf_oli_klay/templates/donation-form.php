@@ -40,7 +40,7 @@
             </label>
         </div>
         <div class="small-12 medium-8 columns">
-            <input name="pname" type="text" required class="input-field" value="<?php echo $_SESSION["pname"]?>">
+            <input name="pname" type="text" required class="input-field" value="<?php echo $_SESSION["pname"] ?? ''?>">
         </div>
     </div>
     <div class="row">
@@ -50,7 +50,7 @@
             </label>
         </div>
         <div class="small-12 medium-8 columns">
-            <input name="street" type="text" required class="input-field" value="<?php echo $_SESSION["pstreet"]?>">
+            <input name="street" type="text" required class="input-field" value="<?php echo $_SESSION["pstreet"] ?? ''?>">
         </div>
     </div>
     <div class="row">
@@ -60,10 +60,10 @@
             </label>
         </div>
         <div class="small-6 medium-2 columns">
-            <input name="zipcode" type="text" required class="input-field"  value="<?php echo $_SESSION["pzip"]?>">
+            <input name="zipcode" type="text" required class="input-field"  value="<?php echo $_SESSION["pzip"] ?? ''?>">
         </div>
         <div class="small-6 medium-6 columns">
-            <input name="city" type="text" required class="input-field" value="<?php echo $_SESSION["pcity"]?>">
+            <input name="city" type="text" required class="input-field" value="<?php echo $_SESSION["pcity"] ?? ''?>">
         </div>
     </div>
     <div class="row">
@@ -86,7 +86,7 @@
         </div>
         <div class="small-12 medium-8 columns">
             <?php /* the original html5 email validation algorithm doesnt satify our needs. */ ?>
-            <input name="email" type="email" required pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9+_.-]+\.[a-zA-Z]{2,}$" class="input-field" value="<?php echo $_SESSION["email"]?>">
+            <input name="email" type="email" required pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9+_.-]+\.[a-zA-Z]{2,}$" class="input-field" value="<?php echo $_SESSION["email"] ?? ''?>">
         </div>
     </div>
     <div class="row text-center">

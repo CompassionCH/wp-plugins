@@ -24,9 +24,9 @@
     <div class="small-12 medium-8 columns">
         <div class="select-wrapper">
             <select name="fonds" id="fonds" class="input-field">
-                <option data-v="15" value="csp_mensuel_15" <?php echo ($_SESSION["fund_code"] == "mensuel 15") ? 'selected' : '' ?>><?php _e('Monatliche Spende von CHF 15.-', 'donation-form'); ?></option>
-                <option data-v="30" value="csp_mensuel_30" <?php echo ($_SESSION["fund_code"] == "mensuel 30") ? 'selected' : '' ?>><?php _e('Monatliche Spende von CHF 30.-', 'donation-form'); ?></option>
-                <option data-v="60" value="csp_mensuel_60" <?php echo ($_SESSION["fund_code"] == "mensuel 60") ? 'selected' : '' ?>><?php _e('Monatliche Spende von CHF 60.-', 'donation-form'); ?></option>
+                <option data-v="15" value="csp_mensuel_15" <?php echo (isset($_SESSION["fund_code"]) && $_SESSION["fund_code"] == "mensuel 15") ? 'selected' : '' ?>><?php _e('Monatliche Spende von CHF 15.-', 'donation-form'); ?></option>
+                <option data-v="30" value="csp_mensuel_30" <?php echo (isset($_SESSION["fund_code"]) && $_SESSION["fund_code"] == "mensuel 30") ? 'selected' : '' ?>><?php _e('Monatliche Spende von CHF 30.-', 'donation-form'); ?></option>
+                <option data-v="60" value="csp_mensuel_60" <?php echo (isset($_SESSION["fund_code"]) && $_SESSION["fund_code"] == "mensuel 60") ? 'selected' : '' ?>><?php _e('Monatliche Spende von CHF 60.-', 'donation-form'); ?></option>
             </select>
         </div>
         <p class="small">
@@ -39,7 +39,7 @@
         <!-- <label class="text-left middle"><?php _e('Je désire faire un don unique', 'donation-form'); ?></label> -->
     </div>
     <div class="small-12 medium-8 columns">
-        <input id="wert" type="number" step="0.01" required class="input-field" name="wert" value="<?php echo $_SESSION["fund_amount"] ?>">
+        <input id="wert" type="number" step="0.01" required class="input-field" name="wert" value="<?php echo $_SESSION["fund_amount"] ?? '' ?>">
     </div>
 </div>
 
