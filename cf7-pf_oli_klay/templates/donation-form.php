@@ -86,7 +86,7 @@
         </div>
         <div class="small-12 medium-8 columns">
             <?php /* the original html5 email validation algorithm doesnt satify our needs. */ ?>
-            <input name="email" type="email" required pattern="^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,}$" class="input-field" value="<?php echo $_SESSION["email"]?>">
+            <input name="email" type="email" required pattern="^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9+_.-]+\.[a-zA-Z]{2,}$" class="input-field" value="<?php echo $_SESSION["email"]?>">
         </div>
     </div>
     <div class="row text-center">
