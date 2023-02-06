@@ -152,7 +152,7 @@ class Compassion_Donation_Form {
         switch ($this->step) {
             case 'redirect';
                 $this->send_data($data);
-    //                session_destroy();
+//                session_destroy();
                 break;
         }
     }
@@ -443,6 +443,8 @@ class Compassion_Donation_Form {
         $redirectionUrl = $client->getTransactionPaymentPageService()->paymentPageUrl($this->spaceId, $pfTransaction->getId());
 
         header('Location: ' . $redirectionUrl);
+
+        session_destroy();
 
     }
 
