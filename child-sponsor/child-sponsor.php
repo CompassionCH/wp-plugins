@@ -50,11 +50,10 @@ class ChildSponsor {
         wp_enqueue_style('child-sponsor', plugin_dir_url(__FILE__) . '/assets/stylesheets/screen.css', array(), null);
 
         //load scripts
-//        wp_enqueue_script('validation-js', plugin_dir_url(__FILE__) . 'bower_components/jquery-validation/dist/jquery.validate.min.js', array('jquery'));
-       // wp_enqueue_script('validation-js', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js', array('jquery'));
-
-//         wp_enqueue_script( 'google-captcha-js', '//www.google.com/recaptcha/api.js', array( 'jquery' ) );
-//        wp_enqueue_script( 'iban-js', plugin_dir_url(__FILE__) . 'bower_components/iban/iban.js', array() );
+        //wp_enqueue_script('validation-js', plugin_dir_url(__FILE__) . 'bower_components/jquery-validation/dist/jquery.validate.min.js', array('jquery'));
+        //wp_enqueue_script('validation-js', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js', array('jquery'));
+        //wp_enqueue_script( 'google-captcha-js', '//www.google.com/recaptcha/api.js', array( 'jquery' ) );
+        //wp_enqueue_script( 'iban-js', plugin_dir_url(__FILE__) . 'bower_components/iban/iban.js', array() );
     }
 
     /**
@@ -64,34 +63,7 @@ class ChildSponsor {
      * @param $data
      * @return string
      */
-   /* private function get_email_template($template, $data)
-    {
-
-        $my_current_lang = apply_filters('wpml_current_language', NULL);
-        ob_start();
-        $session_data = $data;
-        if ($my_current_lang == "fr") {
-            include('templates/email/' . $template);
-        } elseif ($my_current_lang == "de") {
-            include('templates/email_de/' . $template);
-        } elseif ($my_current_lang == "it") {
-            include('templates/email_it/' . $template);
-        }
-        $content = ob_get_contents();
-        ob_end_clean();
-        return $content;
-    }*/
-
-
-    /**
-     * Send form data
-     *
-     * When user completed form do whatever you want with the data
-     *
-     * @param $data
-     */
-    private function send_data($data)
-    {
+    private function send_data($data) {
         ob_start();
         $session_data = $data;
         /**
@@ -129,10 +101,8 @@ class ChildSponsor {
             'post_status' => 'Trash'
         ]);
 
-        // Call Odoo to insert Sponsorship
+        // JSON-RPC call to Odoo to insert Sponsorship
         $child_meta = get_child_meta($session_data['childID']);
-
-        // Call method in Odoo to send sponsorship
         $utm_source = false;
         $utm_medium = false;
         $utm_campaign = false;
@@ -151,8 +121,9 @@ class ChildSponsor {
                 'recurring.contract', 'create_sponsorship',
                 array($child_meta['number'], $session_data, $my_current_lang, $utm_source, $utm_medium, $utm_campaign)
             );
-            if (!$result)
+            if (!$result) {
                 $this->send_fail_email($data);
+            }
         } catch (Exception $e) {
             $this->send_fail_email($data);
         }
@@ -184,9 +155,7 @@ class ChildSponsor {
     /**
      * Process form data
      *
-     * Save data to session, destroy session or send data
-     *
-     * @param $data
+     * @param array $data
      */
     private function process_form_data($data)
     {
