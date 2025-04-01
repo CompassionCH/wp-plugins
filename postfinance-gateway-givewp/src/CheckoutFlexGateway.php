@@ -215,7 +215,7 @@ class CheckoutFlexGateway extends PaymentGateway
         // error_log('sendDonationToOdoo(paymentMethod): '.var_export($paymentMethod, true));
 
         global $wpdb;
-        $fund = $wpdb->get_results("select funds.title, funds.id, funds.description from {$wpdb->prefix}give_funds funds join {$wpdb->prefix}give_fund_form_relationship ffr on (funds.id = ffr.fund_id) join {$wpdb->prefix}posts p on (ffr.form_id = p.id) where ffr.form_id = {$donation->formId}");
+        $fund = $wpdb->get_results("select funds.title, funds.id, funds.description from {$wpdb->prefix}give_funds funds join {$wpdb->prefix}give_revenue cgr on (funds.id = cgr.fund_id) where cgr.donation_id = {$donation->id}");
 
         $fundId = $fund[0]->id;
         $fundTitle = $fund[0]->title;
