@@ -28,18 +28,20 @@ class ChildSponsor {
     /**
      * Called on plugin activation.
      */
-    public function activation() {
+    public function activation(): void
+    {
         $this->check_dependencies();
     }
 
-    public function check_dependencies() {
+    public function check_dependencies(): void
+    {
         if(!class_exists('CompassionOdooConnector')) {
             deactivate_plugins( plugin_basename( __FILE__ ) );
             wp_die( sprintf(__( 'Please install and activate: %s.', 'compassion' ), 'compassion-odoo'), 'Plugin dependency check', array( 'back_link' => true ) );
         }
     }
 
-    public function __init()
+    public function __init(): void
     {
         if (!isset($_SESSION)) {
             session_start();
@@ -49,11 +51,6 @@ class ChildSponsor {
         // load styles
         wp_enqueue_style('child-sponsor', plugin_dir_url(__FILE__) . '/assets/stylesheets/screen.css', array(), null);
 
-        //load scripts
-        //wp_enqueue_script('validation-js', plugin_dir_url(__FILE__) . 'bower_components/jquery-validation/dist/jquery.validate.min.js', array('jquery'));
-        //wp_enqueue_script('validation-js', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js', array('jquery'));
-        //wp_enqueue_script( 'google-captcha-js', '//www.google.com/recaptcha/api.js', array( 'jquery' ) );
-        //wp_enqueue_script( 'iban-js', plugin_dir_url(__FILE__) . 'bower_components/iban/iban.js', array() );
     }
 
     /**
@@ -63,16 +60,34 @@ class ChildSponsor {
      * @param $data
      * @return string
      */
-    private function send_data($data) {
+    private function get_email_template($template, $data): string
+    {
+
+        $my_current_lang = apply_filters('wpml_current_language', NULL);
         ob_start();
         $session_data = $data;
-        /**
-         * send email to user changed phpmailer paths since wp 5.5
-         */
-        require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
-        require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+        if ($my_current_lang == "fr") {
+            include('templates/email/' . $template);
+        } elseif ($my_current_lang == "de") {
+            include('templates/email_de/' . $template);
+        } elseif ($my_current_lang == "it") {
+            include('templates/email_it/' . $template);
+        }
+        $content = ob_get_contents();
+        ob_end_clean();
+        return $content;
+    }
 
-
+    /**
+     * Load email template
+     *
+     * @param $data
+     * @return bool|string
+     */
+    private function send_data($data): bool|string
+    {
+        ob_start();
+        $session_data = $data;
         /**
          * deactivate child
          */
@@ -121,17 +136,24 @@ class ChildSponsor {
                 'recurring.contract', 'create_sponsorship',
                 array($child_meta['number'], $session_data, $my_current_lang, $utm_source, $utm_medium, $utm_campaign)
             );
+            // Debug the $result variable
+            error_log('$result: ' . print_r($result, true));
             if (!$result) {
                 $this->send_fail_email($data);
             }
         } catch (Exception $e) {
+            // Log the exception details
+            error_log('Exception caught: ' . $e->getMessage());
+            error_log('Stack trace: ' . $e->getTraceAsString());
             $this->send_fail_email($data);
         }
 
         ob_end_clean();
+        return true;
     }
 
-    private function send_fail_email($data) {
+    private function send_fail_email($data): void
+    {
         // Send info in case of failure
         $email = new PHPMailer\PHPMailer\PHPMailer();
         $email->isSMTP();                                      // Set mailer to use SMTP
@@ -146,7 +168,7 @@ class ChildSponsor {
         $email->Subject = 'Error while processing sponsorship from the website';
         $email->Body = $this->get_email_template('user-new-sponsor.php', $data);
         $email->isHTML(true);
-        $email->AddAddress('info@compassion.ch');
+        $email->AddAddress('ecino@compassion.ch');
         $email->AddCC('ecino@compassion.ch');
         $email->addCustomHeader('X-SMTPAPI', '{"filters": {"subscriptiontrack" : {"settings" : {"enable" : 0}}}}');
         $email->Send();
@@ -157,7 +179,7 @@ class ChildSponsor {
      *
      * @param array $data
      */
-    private function process_form_data($data)
+    private function process_form_data(array $data): void
     {
         $session_data = $_SESSION['child-sponsor'];
 
@@ -186,7 +208,7 @@ class ChildSponsor {
      *
      * @return string
      */
-    public function shortcode()
+    public function shortcode(): string
     {
         $this->step = (isset($_GET['step'])) ? intval($_GET['step']) : 1;
 

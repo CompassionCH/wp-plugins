@@ -1,8 +1,8 @@
 <?php
 
 /*
- * Plugin Name: Compassion Connector to Odoo V10 only
- * Description: WARNING: only works with Odoo <strong>V10</strong>. Both Odoo connectors cannot be active at the same time and must be activated <strong>after</strong> "Compassion Letters"
+ * Plugin Name: Compassion Connector to Odoo
+ * Description: Both Odoo connectors cannot be active at the same time and must be activated <strong>after</strong> "Compassion Letters"
  * Version:     10.0.1
  * Author:      Compassion Suisse | J. Kläy
  */
@@ -11,7 +11,7 @@ defined('ABSPATH') || die();
 
 require_once 'vendor/autoload.php';
 
-use JsonRpc\Client as JsonRpcClient;
+use GuzzleHttp\Client as JsonRpcClient;
 
 class CompassionOdooConnector {
 
@@ -23,61 +23,61 @@ class CompassionOdooConnector {
     private $models;
 
     public function __construct() {
-        // Initialization of the JSON-RPC client for the "common" endpoint
-        $common = new JsonRpcClient($this->odoo_host . '/jsonrpc/common');
-        // Call of the authentication method
-        $this->uid = $common->execute("authenticate", [
-            $this->odoo_db,
-            $this->odoo_user,
-            $this->odoo_password,
-            []
+        // Initialize JSON-RPC client for authentication
+        $common = new JsonRpcClient(['base_uri' => $this->odoo_host]);
+
+        // Authentication request
+        $response = $common->post('/jsonrpc', [
+            'json' => [
+                'jsonrpc' => '2.0',
+                'params' => [
+                    'service' => 'common',
+                    'method' => 'authenticate',
+                    'args' => [
+                        $this->odoo_db,
+                        $this->odoo_user,
+                        $this->odoo_password,
+                        null,
+                    ],
+                ],
+            ]
         ]);
-        // Initialization of the JSON-RPC client for the "object" endpoint
-        $this->models = new JsonRpcClient($this->odoo_host . '/jsonrpc/object');
+
+        // Handle response
+        if ($response->getStatusCode() !== 200) {
+            error_log('Error during Odoo authentication: ' . $response->getBody());
+            return;
+        }
+
+        $result = json_decode($response->getBody()->getContents(), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON decoding error: ' . json_last_error_msg());
+            return;
+        }
+
+        if (!empty($result['error'])) {
+            error_log('Error in Odoo response: ' . $result['error']['message']);
+            return;
+        }
+
+        $this->uid = $result['result'] ?? null;
+        $this->models = $common; // Initialize client for "object" endpoint
     }
 
     /**
      * Functions for sending via JSON-RPC to Odoo
      */
-    public function getPartnerById($partner_id) {
-        $res = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'res.partner',
-            'search_read',
-            [
-                [
-                    ['id', '=', $partner_id],
-                ]
-            ]
-        ]);
-        error_log(serialize($res));
-
-        if ($res && isset($res->faultString)) {
-            return false;
-        }
-        return $res;
-    }
-
-    public function reserveChild($local_id) {
+    public function reserveChild($local_id): void
+    {
         global $wpdb;
         // Retrieve the child in Odoo by local_id
         $wished_hold_type = 'No Money Hold';
-        $child_search = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'compassion.child',
-            'search_read',
+        $child_search = $this->call_method('compassion.child', 'search_read', [
             [
-                [
-                    ['local_id', '=', $local_id]
-                ],
-                ['fields' => ['id']]
-            ]
+                ['local_id', '=', $local_id]
+            ],
+            ['fields' => ['id']]
         ]);
-
         if (empty($child_search)) {
             error_log('error getting child by local_id');
             return;
@@ -95,18 +95,11 @@ class CompassionOdooConnector {
                 $expiration_date = $date->format('Y-m-d H:i:s');
 
                 // Update in Odoo
-                $this->models->execute("execute_kw", [
-                    $this->odoo_db,
-                    $this->uid,
-                    $this->odoo_password,
-                    'compassion.hold',
-                    'write',
+                $this->call_method('compassion.hold', 'write', [
+                    [$hold_id],
                     [
-                        [$hold_id],
-                        [
-                            'type' => $wished_hold_type,
-                            'expiration_date' => $expiration_date,
-                        ]
+                        'type' => $wished_hold_type,
+                        'expiration_date' => $expiration_date,
                     ]
                 ]);
 
@@ -145,22 +138,16 @@ class CompassionOdooConnector {
     }
 
     public function getHoldByChildId($child_id) {
-        return $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'compassion.hold',
-            'search_read',
+        return $this->call_method('compassion.hold', 'search_read', [
             [
-                [
-                    ['child_id', '=', $child_id]
-                ]
+                ['child_id', '=', $child_id]
             ],
             ['fields' => ['hold_id', 'type']]
         ]);
     }
 
-    public function getPostsIdByLocalId($local_id) {
+    public function getPostsIdByLocalId($local_id): array
+    {
         global $wpdb;
         $querystr = "SELECT post_id FROM compassion_postmeta WHERE meta_value = '$local_id'";
         $res = $wpdb->get_results($querystr);
@@ -169,299 +156,6 @@ class CompassionOdooConnector {
             $a[] = $row->post_id;
         }
         return $a;
-    }
-
-    public function searchPartnerByPartnerRefCity($partner_ref, $city) {
-        $res = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'res.partner',
-            'search_read',
-            [
-                [
-                    ['ref', '=', $partner_ref],
-                    ['city', 'ilike', $city],
-                ]
-            ]
-        ]);
-        error_log(serialize($res));
-
-        if ($res && isset($res->faultString)) {
-            return false;
-        }
-        return $res;
-    }
-
-    public function searchContractByPartnerRefChildCode($partner_ref, $child_code) {
-        $search_contracts = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'recurring.contract',
-            'search_count',
-            [
-                [
-                    ['partner_id', '=', trim($partner_ref)],
-                    ['child_code', '=', trim(strtoupper($child_code))],
-                ]
-            ]
-        ]);
-
-        if ($search_contracts > 0) {
-            $search_contract = $this->models->execute("execute_kw", [
-                $this->odoo_db,
-                $this->uid,
-                $this->odoo_password,
-                'recurring.contract',
-                'search_read',
-                [
-                    [
-                        ['partner_id', '=', trim($partner_ref)],
-                        ['child_code', '=', trim(strtoupper($child_code))],
-                    ],
-                    ['fields' => ['name', 'partner_codega', 'partner_id', 'child_code', 'reference']],
-                    0, // offset
-                    1, // limit
-                    'create_date DESC ' // order
-                ]
-            ]);
-            return $search_contract;
-        }
-        return false;
-    }
-
-    public function searchContractByPartnerLastNameChildCode($last_name, $child_code) {
-        $search_contracts = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'recurring.contract',
-            'search_count',
-            [
-                [
-                    ['partner_id.lastname', 'ilike', trim($last_name)],
-                    ['child_code', '=', trim(strtoupper($child_code))],
-                ]
-            ]
-        ]);
-
-        if ($search_contracts > 0) {
-            $search_contract = $this->models->execute("execute_kw", [
-                $this->odoo_db,
-                $this->uid,
-                $this->odoo_password,
-                'recurring.contract',
-                'search_read',
-                [
-                    [
-                        ['partner_id.lastname', 'ilike', trim($last_name)],
-                        ['child_code', '=', trim(strtoupper($child_code))],
-                    ],
-                    ['fields' => ['name', 'partner_codega', 'partner_id', 'child_code', 'reference']],
-                    0,
-                    1,
-                    'create_date DESC '
-                ]
-            ]);
-            return $search_contract;
-        }
-        return false;
-    }
-
-    public function searchContractByPartnerEmailChildCode($email, $child_code) {
-        $search_contracts = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'recurring.contract',
-            'search_count',
-            [
-                [
-                    ['partner_id.email', 'ilike', trim($email)],
-                    ['child_code', '=', trim(strtoupper($child_code))],
-                ]
-            ]
-        ]);
-
-        if ($search_contracts > 0) {
-            $search_contract = $this->models->execute("execute_kw", [
-                $this->odoo_db,
-                $this->uid,
-                $this->odoo_password,
-                'recurring.contract',
-                'search_read',
-                [
-                    [
-                        ['partner_id.email', 'ilike', trim($email)],
-                        ['child_code', '=', trim(strtoupper($child_code))],
-                    ],
-                    ['fields' => ['name', 'partner_codega', 'partner_id', 'child_code', 'reference']],
-                    0,
-                    1,
-                    'create_date DESC '
-                ]
-            ]);
-            return $search_contract;
-        }
-        return false;
-    }
-
-    public function searchPartnerByEmailNameCity($email, $last_name, $first_name, $city) {
-        $search_partner = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'res.partner',
-            'search_count',
-            [
-                [
-                    ['email', 'ilike', $email],
-                    ['lastname', 'ilike', $last_name],
-                    ['firstname', 'ilike', $first_name],
-                    ['city', 'ilike', $city],
-                    '|', ['active', '=', true], ['active', '=', false]
-                ]
-            ]
-        ]);
-
-        if ($search_partner == 1) {
-            return $this->models->execute("execute_kw", [
-                $this->odoo_db,
-                $this->uid,
-                $this->odoo_password,
-                'res.partner',
-                'search',
-                [
-                    [
-                        ['email', 'ilike', $email],
-                        ['lastname', 'ilike', $last_name],
-                        ['firstname', 'ilike', $first_name],
-                        ['city', 'ilike', $city],
-                        '|', ['active', '=', true], ['active', '=', false]
-                    ]
-                ]
-            ]);
-        } else {
-            $search_partner = $this->models->execute("execute_kw", [
-                $this->odoo_db,
-                $this->uid,
-                $this->odoo_password,
-                'res.partner',
-                'search_count',
-                [
-                    [
-                        ['email', 'ilike', $email],
-                        ['lastname', 'ilike', $last_name],
-                        ['firstname', 'ilike', $first_name],
-                        '|', ['active', '=', true], ['active', '=', false]
-                    ]
-                ]
-            ]);
-
-            if ($search_partner == 1) {
-                return $this->models->execute("execute_kw", [
-                    $this->odoo_db,
-                    $this->uid,
-                    $this->odoo_password,
-                    'res.partner',
-                    'search',
-                    [
-                        [
-                            ['email', 'ilike', $email],
-                            ['lastname', 'ilike', $last_name],
-                            ['firstname', 'ilike', $first_name],
-                            '|', ['active', '=', true], ['active', '=', false]
-                        ]
-                    ]
-                ]);
-            } else {
-                $search_partner = $this->models->execute("execute_kw", [
-                    $this->odoo_db,
-                    $this->uid,
-                    $this->odoo_password,
-                    'res.partner',
-                    'search_count',
-                    [
-                        [
-                            ['email', 'ilike', $email],
-                            '|', ['active', '=', true], ['active', '=', false]
-                        ]
-                    ]
-                ]);
-
-                if ($search_partner == 1) {
-                    return $this->models->execute("execute_kw", [
-                        $this->odoo_db,
-                        $this->uid,
-                        $this->odoo_password,
-                        'res.partner',
-                        'search',
-                        [
-                            [
-                                ['email', 'ilike', $email],
-                                '|', ['active', '=', true], ['active', '=', false]
-                            ]
-                        ]
-                    ]);
-                }
-                return false;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    public function createPartner($last_name, $first_name, $street, $zipcode, $city, $email, $country, $language) {
-        $odoo_countries = array();
-        $odoo_countries['Schweiz']     = 44;
-        $odoo_countries['Suisse']      = 44;
-        $odoo_countries['Deutschland'] = 58;
-        $odoo_countries['Allemagne']   = 58;
-        $odoo_countries['Österreich']  = 13;
-        $odoo_countries['Autriche']    = 13;
-        $odoo_countries['Frankreich']  = 76;
-        $odoo_countries['France']      = 76;
-        $odoo_countries['Italien']     = 110;
-        $odoo_countries['Italie']      = 110;
-
-        $new_partner = $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'res.partner',
-            'create',
-            [
-                [
-                    'customer'   => true,
-                    'lastname'   => stripslashes(ucfirst(trim($last_name))),
-                    'firstname'  => stripslashes(ucfirst(trim($first_name))),
-                    'street'     => stripslashes(ucfirst(trim($street))),
-                    'zip'        => stripslashes(trim($zipcode)),
-                    'city'       => stripslashes(ucfirst(trim($city))),
-                    'country_id' => $odoo_countries[$country],
-                    'lang'       => str_replace('it_CH', 'it_IT', str_replace('_FR', '_CH', str_replace('de_CH', 'de_DE', trim($language)))),
-                    'email'      => stripslashes(trim($email)),
-                    'state'      => 'pending',
-                ]
-            ]
-        ]);
-
-        return $new_partner;
-    }
-
-    public function createInvoiceWithObjects($partner_id, $origin, $amount, $fund, $child_id, $pf_pm, $pf_payid, $pf_brand, $utm_source, $utm_medium, $utm_campaign) {
-        $payment_mode = trim(($pf_pm != $pf_brand ? $pf_pm.' '.$pf_brand : $pf_brand));
-        return $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            'account.invoice',
-            'create_from_wordpress',
-            [
-                $partner_id, $origin, $amount, $fund, $child_id, $pf_payid, $payment_mode, $utm_source, $utm_medium, $utm_campaign
-            ]
-        ]);
     }
 
     /**
@@ -478,14 +172,42 @@ class CompassionOdooConnector {
      * @param $params  array:  parameters to the odoo function
      * @return mixed   the result of the method
      */
-    public function call_method($model, $method, $params) {
-        return $this->models->execute("execute_kw", [
-            $this->odoo_db,
-            $this->uid,
-            $this->odoo_password,
-            $model,
-            $method,
-            $params
+    public function call_method(string $model, string $method, array $params): mixed
+    {
+        $response = $this->models->post("/jsonrpc", [
+            'json' => [
+                'jsonrpc' => '2.0',
+                'params' => [
+                    'service' => 'object',
+                    'method' => 'execute_kw',
+                    'args' => [
+                        $this->odoo_db,
+                        $this->uid,
+                        $this->odoo_password,
+                        $model,
+                        $method,
+                        $params
+                    ],
+                ],
+            ]
         ]);
+
+        if ($response->getStatusCode() !== 200) {
+            error_log('Error calling Odoo method: ' . $response->getBody());
+            return false;
+        }
+
+        $result = json_decode($response->getBody()->getContents(), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON decoding error: ' . json_last_error_msg());
+            return false;
+        }
+
+        if (!empty($result['error'])) {
+            error_log('Error in Odoo response: ' . $result['error']['message']);
+            return false;
+        }
+
+        return $result['result'] ?? false;
     }
 }

@@ -9,7 +9,6 @@ defined('ABSPATH') || die();
 require_once(__DIR__ . '/vendor/autoload.php');
 require_once(ABSPATH . 'wp-admin/includes/image.php');
 
-use \WPHelper as WP;
 
 /**
  * Adds quotes around a child's number.
