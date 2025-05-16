@@ -17,7 +17,7 @@
         "require": {
             "php": ">=5.4"
         },
-        "time": "2017-05-24 05:49:36",
+        "time": "2017-05-24T05:49:36+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -40,6 +40,51 @@
             "rpc",
             "xml",
             "xmlrpc"
+        ]
+    },
+    {
+        "name": "jsonrpc/jsonrpc",
+        "version": "v1.0.3",
+        "version_normalized": "1.0.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/johnstevenson/jsonrpc.git",
+            "reference": "0fcc660ca211a871fe656066e8921406a4c3a2ae"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/johnstevenson/jsonrpc/zipball/0fcc660ca211a871fe656066e8921406a4c3a2ae",
+            "reference": "0fcc660ca211a871fe656066e8921406a4c3a2ae",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2012-11-30T21:43:30+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "JsonRpc": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "John Stevenson",
+                "email": "john-stevenson@blueyonder.co.uk"
+            }
+        ],
+        "description": "JSON-RPC 2.0 client/server implementation",
+        "homepage": "http://github.com/johnstevenson/jsonrpc",
+        "keywords": [
+            "api",
+            "json",
+            "json-rpc",
+            "rpc"
         ]
     }
 ]

@@ -3,7 +3,8 @@
     "description": "Odoo Connector",
     "type": "library",
     "require": {
-        "darkaonline/ripcord": "^0.1.4"
+        "darkaonline/ripcord": "^0.1.4",
+        "jsonrpc/jsonrpc": "^1.0"
     },
     "authors": [
         {

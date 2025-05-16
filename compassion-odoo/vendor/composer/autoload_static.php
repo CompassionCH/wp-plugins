@@ -20,11 +20,22 @@ class ComposerStaticInit2789a74ffe9fb9bba5a9d3fb45120853
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'J' => 
+        array (
+            'JsonRpc' => 
+            array (
+                0 => __DIR__ . '/..' . '/jsonrpc/jsonrpc/src',
+            ),
+        ),
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit2789a74ffe9fb9bba5a9d3fb45120853::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit2789a74ffe9fb9bba5a9d3fb45120853::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit2789a74ffe9fb9bba5a9d3fb45120853::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }
