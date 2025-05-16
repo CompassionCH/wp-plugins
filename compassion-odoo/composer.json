@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "darkaonline/ripcord": "^0.1.4",
-        "jsonrpc/jsonrpc": "^1.0"
+        "fguillot/json-rpc": "^1.3"
     },
     "authors": [
         {

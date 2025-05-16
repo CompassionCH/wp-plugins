@@ -23,9 +23,9 @@ class ComposerStaticInit2789a74ffe9fb9bba5a9d3fb45120853
     public static $prefixesPsr0 = array (
         'J' => 
         array (
-            'JsonRpc' => 
+            'JsonRPC' => 
             array (
-                0 => __DIR__ . '/..' . '/jsonrpc/jsonrpc/src',
+                0 => __DIR__ . '/..' . '/fguillot/json-rpc/src',
             ),
         ),
     );
