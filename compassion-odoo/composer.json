@@ -3,7 +3,7 @@
     "description": "Odoo Connector",
     "type": "library",
     "require": {
-        "darkaonline/ripcord": "^0.1.4"
+        "guzzlehttp/guzzle": "^7.9"
     },
     "authors": [
         {
