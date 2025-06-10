@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-01 08:53+0000\n"
+"POT-Creation-Date: 2025-06-10 14:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/"
 
-#: templates/frontend/header.php:135
+#: templates/frontend/header.php:145
 msgid " teil."
 msgstr ""
 
@@ -100,7 +100,7 @@ msgstr ""
 msgid "Confirm address"
 msgstr ""
 
-#: templates/frontend/header.php:121
+#: templates/frontend/header.php:131
 msgid "Danke, dass du dich für"
 msgstr ""
 
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Direct Debit - LSV"
 msgstr ""
 
-#: templates/frontend/header.php:137
+#: templates/frontend/header.php:147
 msgid "Du wirst das Leben des Kindes für immer verändern."
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 msgid "E-Mail-Adresse erforderlich"
 msgstr ""
 
-#: templates/frontend/header.php:121
+#: templates/frontend/header.php:131
 msgid ""
 "einsetzt. Die Patenschaft wird das Leben dieses Kindes nachhaltig verändern."
 msgstr ""
@@ -277,6 +277,16 @@ msgstr ""
 msgid "Ich bin aufmerksam geworden durch"
 msgstr ""
 
+#: templates/email/user-new-sponsor.php:231
+#: templates/email_de/user-new-sponsor.php:203
+#: templates/email_it/user-new-sponsor.php:223
+msgid ""
+"Ich engagiere mich für mein Patenkind zu beten und ihm regelmässsig zu "
+"schreiben.  Ich habe verstanden, dass eine andere Person die Finanzierung "
+"dieser Patenschaft übernimmt und ich gegenüber dem Kind der/die offizielle "
+"Pate/Patin bin."
+msgstr ""
+
 #: templates/frontend/step-1.php:352
 msgid ""
 "Ich erkläre mich bereit, für mein Patenkind zu beten und ihm regelmässig zu "
@@ -358,9 +368,8 @@ msgstr ""
 
 #: templates/frontend/step-2.php:370
 msgid ""
-"Ja, ich habe die <a target=\"_blank\" href=\"https://compassion.ch/wp-"
-"content/uploads/documents_compassion/GDPR-compassion_DE.pdf\">"
-"Datenschutzbestimmungen gelesen.</a>"
+"Ja, ich habe die <a target=\"_blank\" href=\"https://compassion."
+"ch/de/datenschutz/\">Datenschutzbestimmungen gelesen.</a>"
 msgstr ""
 
 #: templates/email/admin-new-sponsor.php:196
@@ -504,7 +513,7 @@ msgstr ""
 msgid "NEIN"
 msgstr ""
 
-#: templates/frontend/header.php:135
+#: templates/frontend/header.php:145
 msgid "nimmt am"
 msgstr ""
 
@@ -587,15 +596,15 @@ msgstr ""
 msgid "Schreiben kannst du deine Briefe auf Deutsch"
 msgstr ""
 
-#: templates/frontend/header.php:131
+#: templates/frontend/header.php:141
 msgid "Schön, dass du"
 msgstr ""
 
-#: templates/frontend/header.php:124
+#: templates/frontend/header.php:134
 msgid "Schön, dass du "
 msgstr ""
 
-#: templates/frontend/header.php:127
+#: templates/frontend/header.php:137
 msgid "Schön, dass du Patin/Pate von"
 msgstr ""
 
@@ -663,7 +672,7 @@ msgstr ""
 msgid "Téléchargez le formulaire de demande LSV"
 msgstr ""
 
-#: templates/frontend/header.php:135
+#: templates/frontend/header.php:145
 msgid "und dankt dir für deine Unterstützung!"
 msgstr ""
 
@@ -707,7 +716,7 @@ msgid ""
 "info@compassion.ch / +41 (0)31 552 21 21"
 msgstr ""
 
-#: templates/frontend/header.php:128
+#: templates/frontend/header.php:138
 msgid "werden möchtest"
 msgstr ""
 

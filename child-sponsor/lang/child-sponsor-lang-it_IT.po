@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Compassion Child Sponsor\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-27 08:24+0000\n"
-"PO-Revision-Date: 2023-09-01 08:52+0000\n"
+"PO-Revision-Date: 2025-06-10 14:36+0000\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.5.2; wp-5.7.1"
 
-#: templates/frontend/header.php:135
+#: templates/frontend/header.php:145
 msgid " teil."
 msgstr ""
 
@@ -100,7 +100,7 @@ msgstr "Rivista di Compassion"
 msgid "Confirm address"
 msgstr ""
 
-#: templates/frontend/header.php:121
+#: templates/frontend/header.php:131
 msgid "Danke, dass du dich für"
 msgstr ""
 
@@ -136,7 +136,7 @@ msgstr ""
 msgid "Direct Debit - LSV"
 msgstr "Addebito diretto (LSV)"
 
-#: templates/frontend/header.php:137
+#: templates/frontend/header.php:147
 msgid "Du wirst das Leben des Kindes für immer verändern."
 msgstr ""
 "Il tuo  impegno cambierà la sua vita per sempre.\n"
@@ -160,7 +160,7 @@ msgstr "Indirizzo email "
 msgid "E-Mail-Adresse erforderlich"
 msgstr "Compilare il campo Indirizzo email "
 
-#: templates/frontend/header.php:121
+#: templates/frontend/header.php:131
 msgid ""
 "einsetzt. Die Patenschaft wird das Leben dieses Kindes nachhaltig verändern."
 msgstr ""
@@ -395,9 +395,8 @@ msgstr "SI"
 
 #: templates/frontend/step-2.php:370
 msgid ""
-"Ja, ich habe die <a target=\"_blank\" href=\"https://compassion.ch/wp-"
-"content/uploads/documents_compassion/GDPR-compassion_DE.pdf\">"
-"Datenschutzbestimmungen gelesen.</a>"
+"Ja, ich habe die <a target=\"_blank\" href=\"https://compassion."
+"ch/de/datenschutz/\">Datenschutzbestimmungen gelesen.</a>"
 msgstr ""
 "Si, sono a conoscenza della vostra <a target=\"_blank\" href=\"https:"
 "//compassion.ch/wp-content/uploads/documents_compassion/GDPR-compassion_IT."
@@ -544,7 +543,7 @@ msgstr "Nome del partecipante"
 msgid "NEIN"
 msgstr "NO"
 
-#: templates/frontend/header.php:135
+#: templates/frontend/header.php:145
 msgid "nimmt am"
 msgstr ""
 
@@ -627,15 +626,15 @@ msgstr "Portoghese"
 msgid "Schreiben kannst du deine Briefe auf Deutsch"
 msgstr "Puoi scrivere le tue lettere in italiano."
 
-#: templates/frontend/header.php:131
+#: templates/frontend/header.php:141
 msgid "Schön, dass du"
 msgstr "Grazie di sostenere"
 
-#: templates/frontend/header.php:124
+#: templates/frontend/header.php:134
 msgid "Schön, dass du "
 msgstr "Grazie di sostenere"
 
-#: templates/frontend/header.php:127
+#: templates/frontend/header.php:137
 msgid "Schön, dass du Patin/Pate von"
 msgstr ""
 
@@ -703,7 +702,7 @@ msgstr ""
 msgid "Téléchargez le formulaire de demande LSV"
 msgstr "asdfasdfasdf"
 
-#: templates/frontend/header.php:135
+#: templates/frontend/header.php:145
 msgid "und dankt dir für deine Unterstützung!"
 msgstr ""
 
@@ -750,7 +749,7 @@ msgstr ""
 "chiamarci al numero 031 552 21 24 o di scrivere un’email a: info@compassion."
 "ch "
 
-#: templates/frontend/header.php:128
+#: templates/frontend/header.php:138
 msgid "werden möchtest"
 msgstr ""
 
