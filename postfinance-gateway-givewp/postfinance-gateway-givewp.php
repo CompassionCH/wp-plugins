@@ -31,16 +31,15 @@ add_action('givewp_register_payment_gateway', static function ($paymentGatewayRe
     $paymentGatewayRegister->registerGateway(Thimoo\PostfinanceCheckoutFlex\CheckoutFlexGateway::class);
 });
 
-add_action('givewp_odoo_sync', 'givewp_sync_donations_with_odoo');
-function givewp_sync_donations_with_odoo()
+add_action('givewp_sync', 'givewp_sync_donations');
+function givewp_sync_donations()
 {
-    error_log('postfinance-gateway-givewp: odoo sync launched');
     $gateway = new CheckoutFlexGateway();
-    $gateway->sendNonSyncedDonationsToOdoo();
+    $gateway->syncDonations();
 }
 
-if (! wp_next_scheduled('givewp_odoo_sync')) {
-    wp_schedule_event(time(), 'hourly', 'givewp_odoo_sync');
+if (! wp_next_scheduled('givewp_sync')) {
+    wp_schedule_event(time(), 'hourly', 'givewp_sync');
 }
 
 /**
